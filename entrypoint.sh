@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
-#. /crawler/venv/bin/activate
+. /crawler/venv/bin/activate
 
-#cd /crawler/crawler
+cd /crawler/crawler
 
-exec "$@"
+$@
