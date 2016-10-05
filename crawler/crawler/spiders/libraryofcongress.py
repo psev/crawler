@@ -32,8 +32,8 @@ class LibraryOfCongressSpider(scrapy.Spider):
         urls = self.drop(self.extract(response), 'resources')
 
         for url in urls:
-            #yield scrapy.Request(urljoin(BASE, url), callback=self.billstatus)
-            return scrapy.Request(urljoin(BASE, url), callback=self.billstatus)
+            yield scrapy.Request(urljoin(BASE, url), callback=self.billstatus)
+            #return scrapy.Request(urljoin(BASE, url), callback=self.billstatus)
 
     # parse the session
     def billstatus(self, response):
@@ -41,16 +41,16 @@ class LibraryOfCongressSpider(scrapy.Spider):
         urls = self.drop(self.extract(response), 'BILLSTATUS')
 
         for url in urls:
-            #yield scrapy.Request(urljoin(BASE, url), callback=self.billtype)
-            return scrapy.Request(urljoin(BASE, url), callback=self.billtype)
+            yield scrapy.Request(urljoin(BASE, url), callback=self.billtype)
+            #return scrapy.Request(urljoin(BASE, url), callback=self.billtype)
 
     def billtype(self, response):
         # select only '.xml' files
         urls = self.select(self.extract(response), '.xml')
 
         for url in urls:
-            #yield scrapy.Request(urljoin(BASE, url), callback=self.bill)
-            return scrapy.Request(urljoin(BASE, url), callback=self.bill)
+            yield scrapy.Request(urljoin(BASE, url), callback=self.bill)
+            #return scrapy.Request(urljoin(BASE, url), callback=self.bill)
 
     def bill(self, response):
         yield LibraryOfCongressItem(xml=response.body)
