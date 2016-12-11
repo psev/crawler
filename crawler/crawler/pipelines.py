@@ -30,7 +30,6 @@ class MongoDBPipeline(object):
     def __init__(self, crawler):
         self.to_json = Yahoo(dict_type=dict)
 
-        self.logger = crawler.logger
         self.stats = crawler.stats
 
         self.stats.set_value('processed', 0)
@@ -59,7 +58,6 @@ class MongoDBPipeline(object):
         existing = self.collection.find_one({ 'stamp': data['stamp'] })
 
         if existing:
-            self.logger.info(data['stamp'])
             self.stats.inc_value('duplicate')
             return None
 
