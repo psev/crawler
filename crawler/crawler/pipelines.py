@@ -15,10 +15,10 @@ from xml.etree.ElementTree import fromstring
 
 def get_stamp(data):
     bill = data['billStatus']['bill']
-    return "{type}-{number}-{date}".format(
+    return "{date}-{type}-{number}".format(
+        date=bill['createDate'],
         type=bill['billType'],
         number=bill['billNumber'],
-        date=bill['createDate']
     )
 
 class MongoDBPipeline(object):
@@ -45,6 +45,7 @@ class MongoDBPipeline(object):
         self.client = MongoClient(path, port)
         self.db = self.client.get_database(database)
         self.collection = self.db.get_collection(collection)
+        self.duplicates = self.db.get_collection(collection + '_duplicates')
 
     def close_spider(self, spider):
         self.client.close()
@@ -52,12 +53,13 @@ class MongoDBPipeline(object):
     def process_item(self, item, spider):
         data = self.to_json.data(fromstring(item['xml']))
 
-        data['stamp'] = get_stamp(data)
         del(data['billStatus']['dublinCore'])
+        data['stamp'] = get_stamp(data)
 
         existing = self.collection.find_one({ 'stamp': data['stamp'] })
 
         if existing:
+            self.duplicates.insert_one(data)
             self.stats.inc_value('duplicate')
             return None
 
