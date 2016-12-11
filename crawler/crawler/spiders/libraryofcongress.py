@@ -7,7 +7,9 @@ from scrapy.shell import inspect_response
 
 from crawler.items import LibraryOfCongressItem
 
+
 BASE = 'https://www.gpo.gov/fdsys/'
+
 
 class LibraryOfCongressSpider(scrapy.Spider):
     name = "libraryofcongress"
