@@ -30,6 +30,7 @@ class MongoDBPipeline(object):
     def __init__(self, crawler):
         self.to_json = Yahoo(dict_type=dict)
 
+        self.logger = crawler.logger
         self.stats = crawler.stats
 
         self.stats.set_value('processed', 0)
