@@ -65,8 +65,8 @@ ROBOTSTXT_OBEY = True
 # Configure item pipelines
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    'crawler.pipelines.MongoDBPipeline': 100,
-    'crawler.pipelines.CayleyPipeline': 200,
+    'crawler.pipelines.Bill': 100,
+    'crawler.pipelines.BillStatus': 100,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

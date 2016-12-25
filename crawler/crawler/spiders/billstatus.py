@@ -3,20 +3,24 @@
 from urlparse import urljoin
 
 import scrapy
-from scrapy.shell import inspect_response
 
-from crawler.items import LibraryOfCongressItem
+from crawler.items import XMLItem
+from crawler import pipelines
 
 
 BASE = 'https://www.gpo.gov/fdsys/'
 
 
-class LibraryOfCongressSpider(scrapy.Spider):
-    name = "libraryofcongress"
+class BillStatus(scrapy.Spider):
+    name = "billstatus"
     allowed_domains = ["gpo.gov"]
 
     start_urls = (
         urljoin(BASE, 'bulkdata/BILLSTATUS'),
+    )
+
+    pipeline = (
+        pipelines.BillStatus
     )
 
     def extract(self, response):
@@ -35,7 +39,6 @@ class LibraryOfCongressSpider(scrapy.Spider):
 
         for url in urls:
             yield scrapy.Request(urljoin(BASE, url), callback=self.billstatus)
-            #return scrapy.Request(urljoin(BASE, url), callback=self.billstatus)
 
     # parse the session
     def billstatus(self, response):
@@ -44,15 +47,13 @@ class LibraryOfCongressSpider(scrapy.Spider):
 
         for url in urls:
             yield scrapy.Request(urljoin(BASE, url), callback=self.billtype)
-            #return scrapy.Request(urljoin(BASE, url), callback=self.billtype)
 
     def billtype(self, response):
         # select only '.xml' files
         urls = self.select(self.extract(response), '.xml')
 
         for url in urls:
-            yield scrapy.Request(urljoin(BASE, url), callback=self.bill)
-            #return scrapy.Request(urljoin(BASE, url), callback=self.bill)
+            yield scrapy.Request(urljoin(BASE, url), callback=self.billmeta)
 
-    def bill(self, response):
-        yield LibraryOfCongressItem(xml=response.body)
+    def billmeta(self, response):
+        yield XMLItem(xml=response.body)

@@ -8,5 +8,5 @@
 import scrapy
 
 
-class LibraryOfCongressItem(scrapy.Item):
+class XMLItem(scrapy.Item):
     xml = scrapy.Field()

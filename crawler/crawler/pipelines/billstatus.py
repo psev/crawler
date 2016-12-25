@@ -1,27 +1,11 @@
-# -*- coding: utf-8 -*-
-
-# Define your item pipelines here
-#
-# Don't forget to add your pipeline to the ITEM_PIPELINES setting
-# See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
-
-from pymongo import MongoClient
-from bson.objectid import ObjectId
-
-from collections import OrderedDict
 from xmljson import Yahoo
+from pymongo import MongoClient
 
 from xml.etree.ElementTree import fromstring
 
-def get_stamp(data):
-    bill = data['billStatus']['bill']
-    return "{date}-{type}-{number}".format(
-        date=bill['createDate'],
-        type=bill['billType'],
-        number=bill['billNumber'],
-    )
+from util import check_pipeline
 
-class MongoDBPipeline(object):
+class BillStatus(object):
 
     @classmethod
     def from_crawler(cls, crawler):
@@ -39,8 +23,8 @@ class MongoDBPipeline(object):
 
         path = settings.get('mongodb_path', 'localhost')
         port = int(settings.get('mongodb_port', '27017'))
-        database = settings.get('mongodb_database', 'crawler')
-        collection = settings.get('mongodb_collection', 'libraryofcongress')
+        database = settings.get('mongodb_database', 'libraryofcongress')
+        collection = settings.get('mongodb_collection', 'billstatus')
 
         self.client = MongoClient(path, port)
         self.db = self.client.get_database(database)
@@ -50,6 +34,7 @@ class MongoDBPipeline(object):
     def close_spider(self, spider):
         self.client.close()
 
+    @check_pipeline
     def process_item(self, item, spider):
         data = self.to_json.data(fromstring(item['xml']))
 
@@ -66,8 +51,3 @@ class MongoDBPipeline(object):
         self.collection.insert_one(data)
         self.stats.inc_value('processed')
         return data
-
-
-class CayleyPipeline(object):
-
-    pass
