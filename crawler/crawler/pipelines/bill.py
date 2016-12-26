@@ -7,6 +7,21 @@ from util import check_pipeline, MongoDBPipeline
 from pprint import pprint
 
 
+def _get_stamp(data):
+    bill = data['resolution']['form']['legis-num']
+    if not isinstance(bill_number, str):
+        bill = data['resolution']['form']['legis-num']['content']
+
+    congress = data['resolution']['form']['congress']
+    if not isinstance(congress, str):
+        congress = data['resolution']['form']['congress']['content']
+
+    return '%s%s' % (congress, bill)
+
+def get_stamp(meta):
+    return '{congress}/{session}/{type}/{number}/{format}'.format(**meta)
+
+
 class Bill(MongoDBPipeline):
 
     def initialize(self):
@@ -29,12 +44,15 @@ class Bill(MongoDBPipeline):
 
         data['resolution']['metadata']['dublinCore'] = new_core
 
-        #existing = self.collection.find_one({ 'stamp': stamp })
+        data['meta'] = item['meta']
+        data['stamp'] = get_stamp(item['meta'])
 
-        #if existing:
-            #self.duplicates.insert_one(data)
-            #self.stats.inc_value('duplicate')
-            #return None
+        existing = self.collection.find_one({ 'stamp': data['stamp'] })
+
+        if existing:
+            self.duplicates.insert_one(data)
+            self.stats.inc_value('duplicate')
+            return None
 
         self.collection.insert_one(data)
         self.stats.inc_value('processed')

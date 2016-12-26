@@ -25,6 +25,10 @@ class Bill(scrapy.Spider):
         pipelines.Bill,
     )
 
+    def __init__(self, *args, **kargs):
+        super(Bill, self).__init__(*args, **kargs)
+        self.re = re.compile('.*(?P<session>\d+)/[a-z]+/BILLS\-(?P<congress>\d+)(?P<type>[a-z]+)(?P<number>\d+)(?P<format>[a-z]+).xml$')
+
     def extract(self, response):
         return response.xpath('//a[contains(@href, "%s")]/@href' % SECTION).extract()
 
@@ -51,7 +55,6 @@ class Bill(scrapy.Spider):
 
     def type(self, response):
         urls = self.select(self.extract(response), '.*[a-zA-Z]+$')
-        print(urls)
 
         for url in urls:
             yield scrapy.Request(urljoin(BASE, url), callback=self.number)
@@ -63,4 +66,5 @@ class Bill(scrapy.Spider):
             yield scrapy.Request(urljoin(BASE, url), callback=self.bill)
 
     def bill(self, response):
-        yield XMLItem(xml=response.body)
+        match = self.re.match(response.url)
+        yield XMLItem(xml=response.body, meta=match.groupdict())
