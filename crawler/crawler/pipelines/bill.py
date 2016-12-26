@@ -24,10 +24,10 @@ class Bill(MongoDBPipeline):
     def process_item(self, item, spider):
         data = self.to_json.data(fromstring(item['xml'].replace('&', '&amp;')))
 
-        resolution = data['resolution']
+        _data = data.get('resolution', data.get('bill'))
 
-        if resolution['metadata']:
-            del(data['resolution']['metadata']['dublinCore'])
+        if _data.get('metadata'):
+            del(_data['metadata']['dublinCore'])
 
         data['meta'] = item['meta']
         data['stamp'] = get_stamp(item['meta'])
