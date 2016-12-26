@@ -1,5 +1,6 @@
 import re
 
+from cgi import escape
 from xml.etree.ElementTree import fromstring
 
 from util import check_pipeline, MongoDBPipeline
@@ -21,7 +22,7 @@ class Bill(MongoDBPipeline):
 
     @check_pipeline
     def process_item(self, item, spider):
-        data = self.to_json.data(fromstring(item['xml']))
+        data = self.to_json.data(fromstring(item['xml'].replace('&', '&amp;')))
 
         del(data['resolution']['metadata']['dublinCore'])
 
