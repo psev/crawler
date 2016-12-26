@@ -9,14 +9,16 @@ from crawler import pipelines
 
 
 BASE = 'https://www.gpo.gov/fdsys/'
+SECTION = 'bulkdata/BILLSTATUS'
 
 
 class BillStatus(scrapy.Spider):
-    name = "billstatus"
-    allowed_domains = ["gpo.gov"]
+
+    name = 'billstatus'
+    allowed_domains = ['gpo.gov']
 
     start_urls = (
-        urljoin(BASE, 'bulkdata/BILLSTATUS'),
+        urljoin(BASE, SECTION),
     )
 
     pipeline = (
@@ -24,7 +26,7 @@ class BillStatus(scrapy.Spider):
     )
 
     def extract(self, response):
-        return response.xpath('//a[contains(@href, "bulkdata/BILLSTATUS")]/@href').extract()
+        return response.xpath('//a[contains(@href, "bulkdata/%s")]/@href' % SECTION).extract()
 
     def select(self, urls, select):
         return [ u for u in urls if u.endswith(select) ]
