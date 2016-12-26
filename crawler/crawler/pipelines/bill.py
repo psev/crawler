@@ -24,7 +24,7 @@ class Bill(MongoDBPipeline):
     def process_item(self, item, spider):
         data = self.to_json.data(fromstring(item['xml'].replace('&', '&amp;')))
 
-        resolution = data['resoulution']
+        resolution = data['resolution']
 
         if resolution['metadata']:
             del(data['resolution']['metadata']['dublinCore'])
