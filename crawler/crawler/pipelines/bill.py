@@ -32,7 +32,9 @@ class Bill(MongoDBPipeline):
         if not _data:
             _data = data.get('amendment-doc')
 
-        del(_data['metadata']['dublinCore'])
+        metadata = _data.get('metadata')
+        if metadata:
+            del(metadata['dublinCore'])
 
         data['meta'] = item['meta']
         data['stamp'] = get_stamp(item['meta'])
