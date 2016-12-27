@@ -36,6 +36,7 @@ class Bill(MongoDBPipeline):
         if metadata:
             del(metadata['dublinCore'])
 
+        data['url'] = item['url']
         data['meta'] = item['meta']
         data['stamp'] = get_stamp(item['meta'])
 

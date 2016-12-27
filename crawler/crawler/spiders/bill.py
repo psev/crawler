@@ -67,4 +67,4 @@ class Bill(scrapy.Spider):
 
     def bill(self, response):
         match = self.re.match(response.url)
-        yield XMLItem(xml=response.body, meta=match.groupdict())
+        yield XMLItem(xml=response.body, meta=match.groupdict(), url=response.url)

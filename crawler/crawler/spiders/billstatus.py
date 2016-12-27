@@ -58,4 +58,4 @@ class BillStatus(scrapy.Spider):
             yield scrapy.Request(urljoin(BASE, url), callback=self.billmeta)
 
     def billmeta(self, response):
-        yield XMLItem(xml=response.body)
+        yield XMLItem(xml=response.body, url=response.url)

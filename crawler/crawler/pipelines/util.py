@@ -4,14 +4,6 @@ from xmljson import Yahoo
 from pymongo import MongoClient
 
 
-def get_stamp(data):
-    bill = data['billStatus']['bill']
-    return "{date}-{type}-{number}".format(
-        date=bill['createDate'],
-        type=bill['billType'],
-        number=bill['billNumber'],
-    )
-
 def check_pipeline(process_item_method):
 
     @functools.wraps(process_item_method)

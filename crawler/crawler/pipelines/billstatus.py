@@ -3,6 +3,15 @@ from xml.etree.ElementTree import fromstring
 from util import check_pipeline, MongoDBPipeline
 
 
+def get_stamp(data):
+    bill = data['billStatus']['bill']
+    return "{date}-{type}-{number}".format(
+        date=bill['createDate'],
+        type=bill['billType'],
+        number=bill['billNumber'],
+    )
+
+
 class BillStatus(MongoDBPipeline):
 
     def initialize(self):
@@ -15,8 +24,9 @@ class BillStatus(MongoDBPipeline):
     def process_item(self, item, spider):
         data = self.to_json.data(fromstring(item['xml']))
 
-        del(data['billStatus']['dublinCore'])
+        data['url'] = item['url']
         data['stamp'] = get_stamp(data)
+        del(data['billStatus']['dublinCore'])
 
         existing = self.collection.find_one({ 'stamp': data['stamp'] })
 
