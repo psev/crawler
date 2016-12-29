@@ -43,6 +43,8 @@ class Bill(MongoDBPipeline):
         existing = self.collection.find_one({ 'stamp': data['stamp'] })
 
         if existing:
+            if self.settings['mongodb_ignore_duplicate']:
+                return None
             self.duplicates.insert_one(data)
             self.stats.inc_value('duplicate')
             return None

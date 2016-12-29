@@ -27,7 +27,7 @@ class Bill(scrapy.Spider):
 
     def __init__(self, *args, **kargs):
         super(Bill, self).__init__(*args, **kargs)
-        self.re = re.compile('.*(?P<session>\d+)/[a-z]+/BILLS\-(?P<congress>\d+)(?P<type>[a-z]+)(?P<number>\d+)(?P<format>[a-z]+).xml$')
+        self.re = re.compile('.*(?P<session>\d+)/[a-z]+/BILLS\-(?P<congress>\d+)(?P<type>[a-z]+)(?P<number>\d+)(?P<format>[a-z0-9]+).xml$')
 
     def extract(self, response):
         return response.xpath('//a[contains(@href, "%s")]/@href' % SECTION).extract()
