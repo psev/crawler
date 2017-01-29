@@ -1,0 +1,11 @@
+version: "2"
+
+services:
+
+  bill:
+    image: docker-registry.service.consul/crawler
+    command: scrapy crawl bill -s mongodb_path=mongodb.service.consul -L INFO
+
+  billstatus:
+    image: docker-registry.service.consul/crawler
+    command: scrapy crawl billstatus -s mongodb_path=mongodb.service.consul -L INFO
