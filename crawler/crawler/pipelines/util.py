@@ -45,7 +45,7 @@ class MongoDBPipeline(object):
 
         path = self.settings.get('mongodb_path', 'localhost')
         port = int(self.settings.get('mongodb_port', '27017'))
-        database = self.settings.get('mongodb_database', 'libraryofcongress')
+        database = self.settings.get('mongodb_database', 'congress')
 
         self.client = MongoClient(path, port)
         self.db = self.client.get_database(database)
